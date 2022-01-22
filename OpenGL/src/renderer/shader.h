@@ -9,6 +9,7 @@
 
 #include "directional_light.h"
 #include "point_light.h"
+#include "spot_light.h"
 
 #include "common_values.h"
 
@@ -31,6 +32,7 @@ public:
 
     void SetDirectionalLight(DirectionalLight* param_directional_light);
     void SetPointLights(PointLight* param_point_light, unsigned int param_light_count);
+    void SetSpotLights(SpotLight* param_spot_light, unsigned int param_light_count);
 
     void UseShader();
 
@@ -76,8 +78,10 @@ private:
     GLuint m_uniform_shininess;
 
     GLuint m_uniform_point_light_count;
+    GLuint m_uniform_spot_light_count;
 
     int m_point_light_count;
+    int m_spot_light_count;
 
     /* Directional light uniforms. Could be an array,
      * just like the point light*/
@@ -103,6 +107,21 @@ private:
         GLuint m_uniform_linear;
         GLuint m_uniform_exponent;
     } m_uniform_point_light[MAX_POINT_LIGHTS];
+
+    struct
+    {
+        GLuint m_uniform_color;
+        GLuint m_uniform_ambient_intensity;
+        GLuint m_uniform_diffuse_intensity;
+        
+        GLuint m_uniform_position;
+        GLuint m_uniform_constant;
+        GLuint m_uniform_linear;
+        GLuint m_uniform_exponent;
+
+        GLuint m_uniform_direction;
+        GLuint m_uniform_edge;        
+    } m_uniform_spot_light[MAX_SPOT_LIGHTS];
 };
 
 

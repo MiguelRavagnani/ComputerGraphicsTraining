@@ -23,6 +23,7 @@
 #include "common_values.h"
 #include "directional_light.h"
 #include "point_light.h"
+#include "spot_light.h"
 #include "material.h"
 
 GLWindow main_window;
@@ -39,6 +40,7 @@ Material rough_material;
 
 DirectionalLight main_light;
 PointLight point_lights[MAX_POINT_LIGHTS];
+SpotLight spot_lights[MAX_SPOT_LIGHTS];
 
 GLfloat delta_time = 0.0f;
 GLfloat last_time = 0.0f;
@@ -199,7 +201,7 @@ int main()
 
     main_light = DirectionalLight(
         1.0f, 1.0f, 1.0f, 
-        0.0f, 0.0f, 
+        0.1f, 0.1f, 
         0.0f, 0.0f, -1.0f);
 
     unsigned int point_light_count = 0;
@@ -214,11 +216,23 @@ int main()
 
     point_lights[1] = PointLight(
         0.0f, 0.4f, 0.9f,
-        0.0f, 2.0f,
+        0.0f, 1.0f,
         4.0f, 0.0f, 0.0f,
         0.0f, 0.2f, 0.1f);
 
     point_light_count++;
+
+    unsigned int spot_light_count = 0;
+
+    spot_lights[0] = SpotLight(
+        1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        20.0f);
+
+    spot_light_count++;
 
     GLuint uniform_ambient_intensity = 0;
     GLuint uniform_ambinet_color = 0;
@@ -269,9 +283,14 @@ int main()
         uniform_specular_intensity = shader_list[0]->GetSpecularIntensityLocation();
         uniform_shininess = shader_list[0]->GetShininessLocation();
 
+        spot_lights[0].SetFlash(
+            main_camera.GetCameraPosition(),
+            main_camera.GetCameraDirection());
+
         /* Sets up the uniforms inside the method*/
         shader_list[0]->SetDirectionalLight(&main_light);
         shader_list[0]->SetPointLights(point_lights, point_light_count);
+        shader_list[0]->SetSpotLights(spot_lights, spot_light_count);
 
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(main_camera.CalculateViewMatrix()));
@@ -303,7 +322,7 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         shiny_material.UseMaterial(uniform_specular_intensity, uniform_shininess);
-        plain_texture.UseTexture();
+        dirt_texture.UseTexture();
 
         mesh_list[2]->RenderMesh();
 

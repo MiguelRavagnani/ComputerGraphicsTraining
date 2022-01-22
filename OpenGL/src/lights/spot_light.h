@@ -1,16 +1,16 @@
-#ifndef _POINT_LIGHT_
-#define _POINT_LIGHT_
+#ifndef _SPOT_LIGHT_
+#define _SPOT_LIGHT_
 
 #include <iostream>
 
-#include "light.h"
+#include "point_light.h"
 
-class PointLight : public Light
+class SpotLight : public PointLight
 {
 public:
-    PointLight();
+    SpotLight();
 
-    PointLight(
+    SpotLight(
         GLfloat param_red, 
         GLfloat param_green,
         GLfloat param_blue,
@@ -19,9 +19,13 @@ public:
         GLfloat param_x_position,
         GLfloat param_y_position,
         GLfloat param_z_position,
+        GLfloat param_x_direction,
+        GLfloat param_y_direction,   
+        GLfloat param_z_direction,   
         GLfloat param_constant,
         GLfloat param_linear,
-        GLfloat param_exponent);
+        GLfloat param_exponent,
+        GLfloat param_edge);
 
     /* Params should be GLuint*/
     void UseLight(
@@ -29,19 +33,22 @@ public:
         GLuint param_ambient_color_location,
         GLuint param_diffuse_intensity_location,
         GLuint param_position_location,
+        GLuint param_direction_location,
         GLuint param_constant_location,
         GLuint param_linear_location,
-        GLuint param_exponent_location);
+        GLuint param_exponent_location,
+        GLuint param_edge_location);
 
-    ~PointLight();
+    void SetFlash(glm::vec3 param_position, glm::vec3 param_direction);
+
+    ~SpotLight();
 
 protected:
-    glm::vec3 m_position;
+    glm::vec3 m_direction;
 
-    GLfloat m_constant;
-    GLfloat m_linear;
-    GLfloat m_exponent;
+    GLfloat m_edge;
+    GLfloat m_process_edge;
 };
 
 
-#endif //_POINT_LIGHT_
+#endif //_SPOT_LIGHT_

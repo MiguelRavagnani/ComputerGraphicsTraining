@@ -37,13 +37,13 @@ PointLight::PointLight(
 PointLight::~PointLight(){}
 
 void PointLight::UseLight(
-    GLfloat param_ambient_intensity_location,
-    GLfloat param_ambient_color_location,
-    GLfloat param_diffuse_intensity_location,
-    GLfloat param_position_location,
-    GLfloat param_constant_location,
-    GLfloat param_linear_location,
-    GLfloat param_exponent_location)
+    GLuint param_ambient_intensity_location,
+    GLuint param_ambient_color_location,
+    GLuint param_diffuse_intensity_location,
+    GLuint param_position_location,
+    GLuint param_constant_location,
+    GLuint param_linear_location,
+    GLuint param_exponent_location)
 {
     glUniform3f(param_ambient_color_location, m_color.x, m_color.y, m_color.z);
     glUniform1f(param_ambient_intensity_location, m_ambient_intensity);

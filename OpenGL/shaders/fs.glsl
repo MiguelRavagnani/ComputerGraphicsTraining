@@ -8,6 +8,7 @@ in vec3 v_frag_pos;
 out vec4 color;
 
 const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
 
 /* Base struct for the lights*/
 struct Light
@@ -36,6 +37,13 @@ struct PointLight
     float exponent;
 };
 
+struct SpotLight
+{
+    PointLight base;
+    vec3 direction;
+    float edge;
+};
+
 struct Material
 {
     float specular_intensity;
@@ -43,9 +51,11 @@ struct Material
 };
 
 uniform int point_light_count;
+uniform int spot_light_count;
 
 uniform DirectionLight directional_light;
 uniform PointLight point_lights[MAX_POINT_LIGHTS];
+uniform SpotLight spot_lights[MAX_SPOT_LIGHTS];
 
 uniform sampler2D the_texture;
 uniform Material material;
@@ -97,25 +107,59 @@ vec4 CalculateDirectionalLight()
     return CalculateLightByDirection(directional_light.base, directional_light.direction);
 }
 
-vec4 CalculatePointLight()
+vec4 CalculateSinglePointLight(PointLight point_light)
+{
+    /* Direction the light is emmiting to hit this fragment point*/
+    vec3 direction = v_frag_pos - point_light.position;
+
+    float distance = length(direction);
+    direction = normalize(direction);
+
+    vec4 color = CalculateLightByDirection(point_light.base, direction);
+
+    float attenuation = point_light.exponent * distance * distance + 
+                        point_light.linear * distance +
+                        point_light.constant;
+
+    return color / attenuation;
+}
+
+vec4 CalculateSingleSpotLight(SpotLight spot_light)
+{
+    vec3 ray_direction = normalize(v_frag_pos - spot_light.base.position);
+    float spot_light_factor = dot(ray_direction, spot_light.direction);
+
+    if (spot_light_factor > spot_light.edge)
+    {
+        vec4 color = CalculateSinglePointLight(spot_light.base);
+
+        return color * (1.0f - (1.0f - spot_light_factor) * (1.0f/(1.0f - spot_light.edge)));
+    }
+    else
+    {
+        return vec4(0, 0, 0, 0);
+    }
+}
+
+vec4 CalculateMultiplePointLight()
 {
     vec4 total_color = vec4(0, 0, 0, 0);
 
     for (int i = 0; i < point_light_count; i++)
     {
-        /* Direction the light is emmiting to hit this fragment point*/
-        vec3 direction = v_frag_pos - point_lights[i].position;
+        total_color += CalculateSinglePointLight(point_lights[i]);
+    }
 
-        float distance = length(direction);
-        direction = normalize(direction);
+    return total_color;
+}
 
-        vec4 color = CalculateLightByDirection(point_lights[i].base, direction);
+vec4 CalculateMultipleSpotLight()
+{
+    vec4 total_color = vec4(0, 0, 0, 0);
 
-        float attenuation = point_lights[i].exponent * distance * distance + 
-                            point_lights[i].linear * distance +
-                            point_lights[i].constant;
-
-        total_color += (color / attenuation);
+    for (int i = 0; i < spot_light_count; i++)
+    {
+        total_color += CalculateSingleSpotLight(spot_lights[i]);
     }
 
     return total_color;
@@ -124,7 +168,8 @@ vec4 CalculatePointLight()
 void main()
 {
     vec4 light_color = CalculateDirectionalLight();
-    light_color += CalculatePointLight();
+    light_color += CalculateMultiplePointLight();
+    light_color += CalculateMultipleSpotLight();
 
     color = texture(the_texture, v_tex_coord) * light_color;
 }

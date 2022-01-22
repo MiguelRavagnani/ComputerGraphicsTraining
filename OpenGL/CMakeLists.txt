@@ -38,6 +38,7 @@ set(SOURCE_FILES
     src/core/gl_window.cpp
     src/lights/directional_light.cpp
     src/lights/point_light.cpp
+    src/lights/spot_light.cpp
     src/lights/light.cpp
     src/renderer/material.cpp
     src/renderer/mesh.cpp
