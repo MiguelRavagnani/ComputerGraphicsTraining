@@ -49,7 +49,7 @@ void PointLight::UseLight(
     glUniform1f(param_ambient_intensity_location, m_ambient_intensity);
     glUniform1f(param_diffuse_intensity_location, m_diffuse_intensity);
 
-    glUniform3f(param_position_location, m_position.x, m_position.y, m_position.y);
+    glUniform3f(param_position_location, m_position.x, m_position.y, m_position.z);
     glUniform1f(param_constant_location, m_constant);
     glUniform1f(param_linear_location, m_linear);
     glUniform1f(param_exponent_location, m_exponent);

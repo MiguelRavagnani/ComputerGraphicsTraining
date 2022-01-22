@@ -283,8 +283,12 @@ int main()
         uniform_specular_intensity = shader_list[0]->GetSpecularIntensityLocation();
         uniform_shininess = shader_list[0]->GetShininessLocation();
 
+        glm::vec3 lower_light;
+        lower_light = main_camera.GetCameraPosition();
+        lower_light.y -= 0.3f;
+
         spot_lights[0].SetFlash(
-            main_camera.GetCameraPosition(),
+            lower_light,
             main_camera.GetCameraDirection());
 
         /* Sets up the uniforms inside the method*/
