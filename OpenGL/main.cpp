@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <assimp/Importer.hpp>
+
 #include "gl_window.h"
 #include "mesh.h"
 #include "shader.h"
@@ -25,6 +27,7 @@
 #include "point_light.h"
 #include "spot_light.h"
 #include "material.h"
+#include "model.h"
 
 GLWindow main_window;
 std::vector<Mesh* > mesh_list;
@@ -34,6 +37,8 @@ Camera main_camera;
 Texture brick_texture;
 Texture dirt_texture;
 Texture plain_texture;
+
+Model imported_model;
 
 Material shiny_material;
 Material rough_material;
@@ -188,16 +193,19 @@ int main()
         0.5f);
 
     brick_texture = Texture("../textures/brick.png");
-    brick_texture.LoadTexture();
+    brick_texture.LoadTextureAlpha();
 
     dirt_texture = Texture("../textures/dirt.png");
-    dirt_texture.LoadTexture();
+    dirt_texture.LoadTextureAlpha();
 
     plain_texture = Texture("../textures/plain.png");
-    plain_texture.LoadTexture();
+    plain_texture.LoadTextureAlpha();
 
     shiny_material = Material(2.0f, 256);
     rough_material = Material(0.3f, 2);
+
+    imported_model = Model();
+    imported_model.LoadModel("../models/x-wing.obj");
 
     main_light = DirectionalLight(
         1.0f, 1.0f, 1.0f, 
@@ -326,9 +334,17 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         shiny_material.UseMaterial(uniform_specular_intensity, uniform_shininess);
-        dirt_texture.UseTexture();
+        plain_texture.UseTexture();
 
         mesh_list[2]->RenderMesh();
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-10.0f, -2.0f, 15.0f));
+        model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+        glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+        rough_material.UseMaterial(uniform_specular_intensity, uniform_shininess);
+
+        imported_model.RenderModel();
 
         glUseProgram(0);
 

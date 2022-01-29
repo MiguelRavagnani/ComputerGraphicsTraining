@@ -15,15 +15,15 @@ DirectionalLight::DirectionalLight(
     GLfloat param_z_direction)
     
     : Light(
-          param_red, 
-          param_green,
-          param_blue,
-          param_ambient_intensity,
-          param_diffuse_intensity),
+        param_red, 
+        param_green,
+        param_blue,
+        param_ambient_intensity,
+        param_diffuse_intensity),
       m_direction (glm::vec3(
-          param_x_direction, 
-          param_y_direction, 
-          param_z_direction)){}
+        param_x_direction, 
+        param_y_direction, 
+        param_z_direction)){}
 
 DirectionalLight::~DirectionalLight(){}
 

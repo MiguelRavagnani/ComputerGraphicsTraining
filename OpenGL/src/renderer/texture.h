@@ -11,10 +11,12 @@ class Texture
 {
 public:
     Texture();
-    Texture(char* param_file_location);
+    Texture(const char* param_file_location);
     ~Texture();
 
-    void LoadTexture();
+    bool LoadTexture();
+    bool LoadTextureAlpha();
+
     void UseTexture();
     void ClearTexture();
 
@@ -25,7 +27,7 @@ private:
     int m_height;
     int m_depth;
 
-    char* m_file_location;
+    const char* m_file_location;
 };
 
 

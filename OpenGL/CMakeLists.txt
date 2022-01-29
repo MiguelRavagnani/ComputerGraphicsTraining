@@ -17,6 +17,14 @@ message(STATUS "GLEW included at ${GLEW_INCLUDE_DIR}")
 find_package(glfw3 REQUIRED)
 message(STATUS "Found glfw3 in ${glfw3_INCLUDE_DIR}")
 
+#assimp
+if (assimp_FOUND)
+    set(ASSIMP_LIBRARY "assimp")
+    add_library(${ASSIMP_LIBRARY} SHARED IMPORTED)
+    message(STATUS "Found assimp in ${assimp_INCLUDE_DIR}")
+    set_target_properties(${ASSIMP_LIBRARY} PROPERTIES IMPORTED_LOCATION "${assimp_LIBRARY_DIRS}/libassimp.so")
+endif(assimp_FOUND)
+
 set(INCLUDE_DIRS ${OPENGL_INCLUDE_DIR} ${glm_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${glfw3_INCLUDE_DIRS})
 
 set(LOCAL_INCLUDE_DIRS
@@ -26,7 +34,8 @@ set(LOCAL_INCLUDE_DIRS
     "${CMAKE_SOURCE_DIR}/src/core"
     "${CMAKE_SOURCE_DIR}/src/lights"
     "${CMAKE_SOURCE_DIR}/src/renderer"
-    "${CMAKE_SOURCE_DIR}/src/third_party")
+    "${CMAKE_SOURCE_DIR}/src/third_party"
+    "${CMAKE_SOURCE_DIR}/src/mesh")
 
 set(LIBRARIES ${OPENGL_LIBRARIES} ${glm_LIBRARIES} ${GLEW_LIBRARIES} ${glfw3_LIBRARIES})
 
@@ -40,14 +49,15 @@ set(SOURCE_FILES
     src/lights/point_light.cpp
     src/lights/spot_light.cpp
     src/lights/light.cpp
+    src/mesh/mesh.cpp
+    src/mesh/model.cpp
     src/renderer/material.cpp
-    src/renderer/mesh.cpp
     src/renderer/shader.cpp
     src/renderer/texture.cpp)
 
 
 add_executable(scene ${SOURCE_FILES} )
 
-target_link_libraries(scene ${LIBRARIES} glfw)
+target_link_libraries(scene ${LIBRARIES} glfw assimp)
 
 target_include_directories(scene PRIVATE ${LOCAL_INCLUDE_DIRS})

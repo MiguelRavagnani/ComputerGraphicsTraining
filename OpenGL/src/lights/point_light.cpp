@@ -21,15 +21,15 @@ PointLight::PointLight(
     GLfloat param_exponent)
     
     : Light(
-          param_red, 
-          param_green,
-          param_blue,
-          param_ambient_intensity,
-          param_diffuse_intensity),
+      param_red, 
+      param_green,
+      param_blue,
+      param_ambient_intensity,
+      param_diffuse_intensity),
       m_position (glm::vec3(
-          param_x_position,
-          param_y_position,
-          param_z_position)),
+        param_x_position,
+        param_y_position,
+        param_z_position)),
       m_constant (param_constant),
       m_linear (param_linear),
       m_exponent (param_exponent){}
